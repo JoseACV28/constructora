@@ -134,7 +134,7 @@ app.get("/edificios", (req, res) => {
       console.error("Edificios Error al ejecutar la consulta:", err);
       res.status(500).send("Error al obtener los registros");
     } else {
-      console.log("Edificios Registros obtenidos exitosamente");
+      console.log("Edificios Registros obtenidos exitosamente", result);
       res.status(200).json(result);
     }
   });
@@ -142,7 +142,7 @@ app.get("/edificios", (req, res) => {
 
 app.get("/edificios/:id", (req, res) => {
   const edificioId = req.params.id;
-  const query = "SELECT comunas.nombre AS comuna, edificios.id, nombre_proyecto, direccion, id_comuna, cantidad_deptos FROM edificios JOIN comunas ON edificios.id_comuna = comunas.id WHERE id = ?";
+  const query = "SELECT comunas.nombre AS comuna, edificios.id, nombre_proyecto, direccion, id_comuna, cantidad_deptos FROM edificios JOIN comunas ON edificios.id_comuna = comunas.id WHERE edificios.id = ?";
 
   db.query(query, [edificioId], (error, results) => {
     if (error) {
@@ -574,11 +574,12 @@ app.delete("/reservas/:id", (req, res) => {
 });
 
 app.post("/reservas", (req, res) => {
-  const {id, departamento_id, nombre_cliente, email_cliente, telefono_cliente, fecha } = req.body;
+  const {id, departamento_id, nombre_cliente, email_cliente, telefono_cliente, fecha_cliente } = req.body;
+  console.log("req.body", req.body);
 
-  const query = "INSERT INTO reservas (id, departamento_id, nombre_cliente, email_cliente, telefono_cliente, fecha) VALUES (?,?, ?, ?, ?, ?)";
+  const query = "INSERT INTO reservas (id, departamento_id, nombre_cliente, email_cliente, telefono_cliente, fecha) VALUES (?, ?, ?, ?, ?, ?)";
 
-  db.query(query, [id, departamento_id, nombre_cliente, email_cliente, telefono_cliente, fecha], (error, results) => {
+  db.query(query, [id, departamento_id, nombre_cliente, email_cliente, telefono_cliente, fecha_cliente], (error, results) => {
     if (error) {
       return res.status(500).json({ error: "Error al agregar una reserva." });
     } else {

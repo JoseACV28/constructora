@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { BiSearchAlt } from "react-icons/bi";
 
 function ReservaUsuario() {
 
   //const reservasAgente;
   const [reservas, setReservas] = useState([]);
   const agenteLocal = JSON.parse(localStorage.getItem("agente"));
+
   const navigate = useNavigate();
 
   useEffect(() => {
     // Realiza la solicitud GET para obtener los edificios con información de proyectos
-    axios.get('http://localhost:8800/reservas')
+    axios.get(`http://localhost:8800/reservas/agentes/${agenteLocal.id}`)
       .then(res => {
         setReservas(res.data);
         console.log("resultado reservas", res)
@@ -19,39 +21,10 @@ function ReservaUsuario() {
       .catch(error => {
         console.error('Error al obtener reservas:', error.response);
       });
-  }, []); // El segundo argumento [] indica que el efecto se ejecuta solo una vez al montar el componente
+  }, [reservas]); // El segundo argumento [] indica que el efecto se ejecuta solo una vez al montar el componente
 
   //reservasAgente = reservas.filter(reserva => reserva.agente === agenteLocal.id);
 
-  const [setAgentes] = useState([]);
-
-  useEffect(() => {
-
-    const fetchTodos = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8800/agentes/${agenteLocal.id}`)
-        setAgentes(response.data);
-        console.log("resultado agentes", response.data);
-      } catch (error) {
-        console.error('Error al obtener agentes:', error);
-      }
-    }
-    fetchTodos();
-  },[])
-
-  const [setEdificios] = useState([]);
-
-  useEffect(() => {
-    // Realiza la solicitud GET para obtener la información de los agentes
-    axios.get('http://localhost:8800/edificios')
-      .then(res => {
-        setEdificios(res.data);
-        console.log("resultado agentes", res);
-      })
-      .catch(error => {
-        console.error('Error al obtener agentes:', error);
-      });
-  }, []);
 
   const eliminar = async (id) => {
     try {
@@ -76,7 +49,7 @@ function ReservaUsuario() {
           <th className="py-3 px-4 text-left">Email</th>
           <th className="py-3 px-4 text-left">Telefono</th>
           <th className="py-3 px-4 text-left">Fecha</th>
-          <th className="py-3 px-4 text-left">departamento_id</th>
+          <th className="py-3 px-4 text-left">departamento</th>
           <th className="py-3 px-4 text-left"> </th>
         </tr>
       </thead>
@@ -86,8 +59,13 @@ function ReservaUsuario() {
           <td className="py-3 px-4">{reserva.nombre_cliente}</td>
           <td className="py-3 px-4">{reserva.email_cliente}</td>
           <td className="py-3 px-4">{reserva.telefono_cliente}</td>
-          <td className="py-3 px-4">{reserva.fecha}</td>
-          <td className="py-3 px-4">{reserva.departamento_id}</td>
+          <td className="py-3 px-4">{reserva.fecha.split("T")[0]}</td>
+          <td className="py-3 px-4" onClick={() => navigate(`/departamento/${reserva.departamento_id}`)}>
+            <div className=" flex text-2xl mr-2 items-center justify-center bg-sky-200 rounded-full border border-sky-400">
+            <BiSearchAlt   />
+            </div>
+            
+          </td>
           <td className="py-3 px-4">
             <button onClick={() => eliminar(reserva.id)} className="font-medium text-blue-600 hover:text-blue-800">Eliminar</button>
           </td>

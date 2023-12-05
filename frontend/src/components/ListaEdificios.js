@@ -1,7 +1,10 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { BiBarChartSquare , BiMap, BiBuilding } from 'react-icons/bi';
+import { BiBarChartSquare , BiMap, BiBuilding, BiLoaderCircle } from 'react-icons/bi';
+import { RiSearch2Line } from 'react-icons/ri';
+import MenuEdificios from './MenuEdificios';
+
 
 const ListaEdificios = () => {
   console.log("ListaEdificios 0");
@@ -48,8 +51,14 @@ const ListaEdificios = () => {
   console.log("ListaEdificios 5");
   return (
     <section>
+       <div className='px-[30px] py-6 max-auto flex flex-col lg:flex-row justify-center gap-6 relative lg:-top-4 lg:shadow-1 bg-white lg:bg-transparent lg:backdrop-blur'>
+      <MenuEdificios />
+      <button className='bg-sky-500 transition w-[162px] h-[64px] rounded-lg flex justify-center items-center text-white text-lg'>
+        <RiSearch2Line />
+      </button>
+    </div>
        {loading ? 
-        <p>Cargando datos...</p>
+        <div className="flex items-center justify-center text-3xl text-slate-600"><p>Cargando datos...</p><BiLoaderCircle /></div>
        : 
        <>
       <div>

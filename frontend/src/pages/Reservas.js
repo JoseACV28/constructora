@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import Image from '../assets/img/house-banner.png';
@@ -12,7 +12,8 @@ function ReservaForm() {
   const [reserva, setReserva] = useState({
     nombre_cliente: '',
     email_cliente: '',
-    telefono_cliente: ''
+    telefono_cliente: '',
+    fecha_cliente: '',
   });
 
   const navigate = useNavigate();
@@ -20,12 +21,23 @@ function ReservaForm() {
   const agenteLocal = JSON.parse(localStorage.getItem("agente"));
 
   const handleReservaChange = (e) => {
-    setReserva((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    e.preventDefault();
+    setReserva((prev) => ({ ...prev, [e.target.name]: e.target.value }), () => {
+    });
   };
+
+  useEffect(() => {
+    // Este código se ejecutará después de que el componente se haya renderizado
+    // y después de que el estado reserva se haya actualizado.
+    console.log("handleReservaChange2", reserva);
+  }, [reserva]);
+
 
   const handleReservaSubmit = async (e) => {
     e.preventDefault();
     try {
+      reserva.departamento_id = deptoJSON.id;
+      console.log("handleReservaSubmit", reserva);
       await axios.post('http://localhost:8800/reservas', reserva);
       // Puedes redirigir a otra página después de enviar la reserva
       navigate('/LoginAgentes');
@@ -36,7 +48,8 @@ function ReservaForm() {
 
 
 
-  const load = async () => {
+  /*const load = async () => {
+
     console.log('agente', agenteLocal);
     await axios.get(`http://localhost:8800/agentes/${agenteLocal.id}`)
       .then(res => {
@@ -57,12 +70,40 @@ function ReservaForm() {
         console.error('Error al obtener edificio:', error);
       });
       console.log("deptoEdificio:", edificio);
-    }
+    }*/
+
+    useEffect(() => {
+
+      const fetchTodos = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8800/agentes/${agenteLocal.id}`)
+          setAgente(response.data);
+          console.log("Resultado agentes -", response.data);
+        } catch (error) {
+          console.error('Error al obtener agentes:', error);
+        }
+      }
+      fetchTodos();
+    },[]);
+
+    useEffect(() => {
+
+      const fetchTodos = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8800/edificios/${deptoJSON.edificio_id}`)
+          setEdificio(response.data);
+          console.log("Resultado edificio -", response.data);
+        } catch (error) {
+          console.error('Error al obtener edificio:', error);
+        }
+      }
+      fetchTodos();
+    },[]);
 
 
 
   return (
-    <section onLoad={load}>
+    <section>
         <div>
         <div className='flex justify-between'>
       <div className="bg-white hover:shadow-2xl transition rounded-lg p-10 shadow-md w-96 ml-4">
@@ -85,6 +126,7 @@ function ReservaForm() {
               className="border border-slate-300 text-bold text-slate-600 focus:border-sky-600 outline-none rounded w-full px-4 h-10 mb-4" placeholder='Proyecto' value={edificio.nombre_proyecto} disabled
             />
             </div>
+            
             
             <label
               className="flex text-sky-500 text-sm font-bold mb-2 mt-2"
@@ -132,6 +174,20 @@ function ReservaForm() {
               placeholder="Ingrese su telefono"
               name="telefono_cliente"
               id="telefono_cliente"
+              onChange={handleReservaChange}
+              required
+            />
+            <label
+              className="flex text-sky-500 text-sm font-bold mb-2"
+              htmlFor="fecha_cliente"
+            >
+              Fecha
+            </label>
+            <input
+              className="border border-slate-300 focus:border-sky-600 outline-none rounded w-full px-4 h-14 text-sm"
+              type="date"
+              name="fecha_cliente"
+              id="fecha_cliente"
               onChange={handleReservaChange}
               required
             />

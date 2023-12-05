@@ -220,7 +220,7 @@ function ReservaUsuario() {
                   className="bg-sky-500 hover:bg-sky-700 text-white rounded p-4 text-sm w-full transition"
                   type="submit"
                 >
-                  {formularioActual === 1 ? 'Siguiente' : 'Finalizar'}
+                  Finalizar
                 </button>
               </div>
             </form>

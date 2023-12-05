@@ -2,7 +2,6 @@ import React from 'react';
 
 //image
 import Image from '../assets/img/house-banner.png';
-import Menu from './Menu';
 
 const Banner = () => {
     return <section className='h-full max-h-[640px] mb-8 xl:mb-24'>
@@ -22,7 +21,6 @@ const Banner = () => {
                 <img src={Image} alt='' />
             </div>
         </div>
-        <Menu />
     </section>;
 }
 
