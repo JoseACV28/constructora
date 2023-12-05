@@ -3,11 +3,16 @@ import { RiArrowDownSLine, RiArrowUpSLine } from 'react-icons/ri'
 import { Menu } from '@headlessui/react';
 import axios from "axios";
 
-function MenuEdificios() {
+function MenuEdificios({ onValueChange }) {
   const [isOpen, setIsOpen] = useState(false);
   const [comunas, setComunas] = useState([]);
   const [selectedComuna, setSelectedComuna] = useState(null);
   const comunaTextDefault = "Elija una comuna";
+
+  useEffect(() => {
+    setSelectedComuna(comunaTextDefault);
+    onValueChange(selectedComuna);
+  }, [])
 
   useEffect(() => {
     axios.get("http://localhost:8800/comunas")  // Ajusta la ruta según tu backend
@@ -22,17 +27,28 @@ function MenuEdificios() {
       });
   }, []);
 
+  useEffect(() => {
+    onValueChange(selectedComuna);
+  }, [selectedComuna]);
+
   const handleComunaSelect = (comuna) => {
-    setSelectedComuna(comuna.nombre === comunaTextDefault ? null : comuna.nombre);
+    console.log("handleComunaSelect", comuna);
+    if (comuna === comunaTextDefault) {
+      setSelectedComuna(comuna);
+    } else {
+      setSelectedComuna(comuna.nombre === comunaTextDefault ? comunaTextDefault : comuna.nombre);
+    }
     setIsOpen(false); // Cerrar el menú después de seleccionar una comuna
   };
 
+
+
   return (
     <Menu as='div' className='dropDown relative'>
-      <Menu.Button onClick={() => setIsOpen(!isOpen)} className='dropdown-btn w-[180px] h-[70px] mb-4 text-left justify-center items-center font-bold'>
+      <Menu.Button onClick={() => setIsOpen(!isOpen)} className='dropdown-btn w-[180px] h-[70px] mb-9 text-left justify-center items-center font-bold'>
         <div>
           <div className="text-[15px] font-medium leading-tight"></div>
-          <div className="text-[16px] justify-between">{selectedComuna || comunaTextDefault}</div>
+          <div className="text-[16px] justify-between">{selectedComuna}</div>
         </div>
         {isOpen ? (
           <RiArrowUpSLine className="dropdown-icon-secondary" />

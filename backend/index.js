@@ -242,7 +242,7 @@ app.post("/edificios", (req, res) => {
 });
 
 app.get("/departamentos", (req, res) => {
-  const query = "SELECT id, edificio_id, agentes_id, piso, metraje, habitaciones, banos, precio, precio_uf, descripcion, numero_depto FROM departamentos";
+  const query = "SELECT departamentos.id, edificio_id, agentes_id, piso, metraje, habitaciones, banos, precio, precio_uf, descripcion, numero_depto, comunas.nombre AS 'comuna' FROM departamentos JOIN edificios ON departamentos.edificio_id = edificios.id JOIN comunas ON edificios.id_comuna = comunas.id";
 
   db.query(query, (err, result) => {
     if (err) {

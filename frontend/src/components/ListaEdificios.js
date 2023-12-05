@@ -12,25 +12,39 @@ const ListaEdificios = () => {
   const [edificios, setEdificios] = useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true)
+  const [loading2, setLoading2] = useState(true)
+  const [departamentosXComunas, setDepartamentosXComunas] = useState([]);
+  const comunaTextDefault = "Elija una comuna";
+
 
   console.log("ListaEdificios 1");
 
+  // Estado en el componente padre para almacenar el valor del componente hijo
+  const [childValue, setChildValue] = useState('');
+
+  // Función que se pasa al componente hijo como prop
+  const handleChildValueChange = (newValue) => {
+    // Recibe el valor del componente hijo y realiza alguna acción en el componente padre
+    setChildValue(newValue);
+  };
+
   useEffect( () => {
-
-    console.log("ListaEdificios 2");
-
     axios.get('http://localhost:8800/departamentos')
     .then(res => {
       setDepartamentos(res.data);
+      setLoading2(false);
       console.log("resultado departamentos", res)
     })
     .catch(error => {
       console.log('Error al obtener departamentos:', error);
+      setLoading2(false);
     });
-
-    console.log("ListaEdificios 3");
   }, []);
-  console.log("ListaEdificios 3.1");
+
+  useEffect(() => {
+    setDepartamentosXComunas(departamentos);
+  }, [departamentos])
+
 
   useEffect(() => {
 
@@ -48,16 +62,23 @@ const ListaEdificios = () => {
     fetchTodos();
   },[]);
 
-  console.log("ListaEdificios 5");
+  useEffect(() => {
+    if (childValue === comunaTextDefault) {
+      setDepartamentosXComunas(departamentos);
+    } else {
+      setDepartamentosXComunas(departamentos.filter(departamento => departamento.comuna === childValue));
+    }
+  }, [childValue]);
+
   return (
     <section>
        <div className='px-[30px] py-6 max-auto flex flex-col lg:flex-row justify-center gap-6 relative lg:-top-4 lg:shadow-1 bg-white lg:bg-transparent lg:backdrop-blur'>
-      <MenuEdificios />
+      <MenuEdificios onValueChange={handleChildValueChange}/>
       <button className='bg-sky-500 transition w-[162px] h-[64px] rounded-lg flex justify-center items-center text-white text-lg'>
         <RiSearch2Line />
       </button>
     </div>
-       {loading ? 
+       {loading || loading2 ? 
         <div className="flex items-center justify-center text-3xl text-slate-600"><p>Cargando datos...</p><BiLoaderCircle /></div>
        : 
        <>
@@ -66,7 +87,7 @@ const ListaEdificios = () => {
           {
             (edificios.length !== 0) ? 
             
-            departamentos.map(departamento => (
+            departamentosXComunas.map(departamento => (
               <div className="bg-white shadow-1 p-5 rounded-lg w-full mx-auto max-w-[360px] cursor-pointer hover:shadow-2xl transition" key={departamento.id}>
                     <div onClick={() => navigate(`/departamento/${departamento.id}`)}>
                       <img className="mb-8 rounded-lg max-h-[350px] rounded-tl-[40px] rounded-br-[40px]" src={`http://localhost:8800/edificios/${departamento.edificio_id}/imagen`} alt={`Imagen de ${departamento.edificio_id}`} />

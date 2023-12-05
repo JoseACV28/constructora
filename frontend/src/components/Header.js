@@ -31,7 +31,6 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
                 <>
                 <Link className='bg-sky-500 hover:bg-sky-600 text-white px-4 py-3 rounded-lg transition' onClick={handleLogout} to='/'>Cerrar Sesión</Link>
                 <Link className='bg-sky-500 hover:bg-sky-600 text-white px-4 py-3 rounded-lg transition' to='/LoginAgentes'>Mis Reservas</Link>
-                <Link className='hover:text-sky-400 transition' to='/IngresarEdificio'>ingresar Edificio</Link>
                 </>
                 
               ) : (
